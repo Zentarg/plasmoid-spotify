@@ -21,8 +21,8 @@ This plasmoid is designed to be lightweight and efficient without impacting syst
    Copy the contents of the src folder to your local plasmoid directory:
 
 ```bash
-mkdir ~/.local/share/plasma/plasmoids/plasmoid-spotify/
-cp -r src/* ~/.local/share/plasma/plasmoids/plasmoid-spotify/
+mkdir -p ~/.local/share/plasma/plasmoids/spotify/
+cp -r src/* ~/.local/share/plasma/plasmoids/spotify/
 ```
 
 2. **Restart Plasmashell**

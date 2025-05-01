@@ -94,7 +94,7 @@ PlasmoidItem {
             id: lyricsRenderer
             lyrics: null
             spotify: spotify
-            visible: spotify && spotify.ready && lyrics && lyrics.length > 0
+            visible: plasmoid.configuration.showLyrics && spotify && spotify.ready && lyrics && lyrics.length > 0
 
             Layout.fillWidth: true
         }
