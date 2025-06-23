@@ -16,7 +16,10 @@ This plasmoid is designed to be lightweight and efficient without impacting syst
 - **Volume Control**: Adjust volume using the scroll wheel.
 
 ## Installation
+### KDE Store Installation
+You can easily install the Spotify plasmoid from the [KDE Store](https://store.kde.org/p/2265660)
 
+### Manual Installation
 1. **Copy Files**
    Copy the contents of the src folder to your local plasmoid directory:
 
