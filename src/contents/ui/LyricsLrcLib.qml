@@ -32,11 +32,27 @@ Item {
     function search(trackName, artistName, albumName) {
         return searchByTrack(trackName, artistName, albumName)
             .then(data => {
-            if (data.length <= 0) {
-                return searchByString(trackName + " " + artistName);
-            }
-            return data;
-        });
+                if (data.length > 0) {
+                    return data;
+                }
+                return searchByString(trackName + " " + artistName)
+                    .then(data2 => {
+                        if (data2.length > 0) {
+                            return data2;
+                        }
+                        return searchByString(trackName)
+                            .then(data3 => {
+                                if (data3.length > 0) {
+                                    // Remove all entries with wrong artist
+                                    data3 = data3.filter(item => {
+                                        return item.artistName.toLowerCase() === artistName.toLowerCase();
+                                    });
+                                    return data3;
+                                }
+                                return [];
+                            });
+                    });
+            });
     }
 
     function searchByTrack(trackName, artistName, albumName) {

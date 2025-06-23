@@ -76,7 +76,7 @@ Text {
     }
 
     function getLineHeight() {
-        return textElement.lineHeight * textElement.font.pixelSize * 1.389;
+        return textElement.contentHeight / textElement.lineCount;
     }
 
 }
