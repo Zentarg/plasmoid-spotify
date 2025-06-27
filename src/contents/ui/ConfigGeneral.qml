@@ -1,19 +1,27 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import org.kde.kirigami 2.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCM
 
-Page {
-    title: "Spotify Config"
+KCM.SimpleKCM {
+    property alias cfg_showLyrics: showLyrics.checked
+    property bool cfg_showLyricsDefault: true
 
     ColumnLayout {
         spacing: Kirigami.Units.smallSpacing
-        anchors.fill: parent
+
+        Kirigami.Heading {
+            text: "Lyrics"
+            level: 3
+            Layout.alignment: Qt.AlignLeft
+        }
 
         CheckBox {
+            id: showLyrics
             text: "Show lyrics"
-            checked: plasmoid.configuration.showLyrics
-            onToggled: plasmoid.configuration.showLyrics = checked
+            checked: cfg_showLyrics
+            Layout.alignment: Qt.AlignLeft
         }
     }
 }

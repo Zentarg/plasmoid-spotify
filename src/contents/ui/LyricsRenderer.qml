@@ -17,6 +17,9 @@ Text {
     font: Kirigami.Theme.defaultFont
     lineHeight: 0.8
 
+    onWidthChanged: updateTargetPosition(false)
+    onHeightChanged: updateTargetPosition(false)
+
     property var lyrics: null
     property var spotify: null
     property var transitionDuration: 1000
@@ -52,14 +55,14 @@ Text {
             animation.to = calculateTargetY()
             animation.start()
         } else {
-            y = calculateTargetY()
             animation.stop()
+            y = calculateTargetY()
         }
     }
 
     function calculateTargetY() {
         let offsetY = 0;
-        let lineHeight = getLineHeight();
+        let lineHeight = (textElement.contentHeight - 3) / textElement.lineCount;
         if (lyrics !== null) {
             let position = spotify.getDaemonPosition() / 1_000_000 + transitionDuration / 1000;
             for (let i = 0; i < lyrics.length; i++) {
@@ -72,11 +75,7 @@ Text {
                 offsetY += lineHeight;
             }
         }
-        return lineHeight * 2 - 2 - offsetY;
-    }
-
-    function getLineHeight() {
-        return textElement.contentHeight / textElement.lineCount;
+        return textElement.parent.height / 2 - offsetY + lineHeight / 2 - 3;
     }
 
 }
