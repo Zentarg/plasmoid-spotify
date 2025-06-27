@@ -37,6 +37,11 @@ kquitapp5 plasmashell && kstart5 plasmashell
 
 Your plasmoid should now be available to add to your KDE Plasma panel or desktop.
 
+## Images
+![No Lyrics](.github/assets/no_lyrics.png)
+![Desktop Widget](.github/assets/desktop.png)
+![Settings](.github/assets/settings.png)
+
 ### Inspiration
 
 This project was inspired by:
