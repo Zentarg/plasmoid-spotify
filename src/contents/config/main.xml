@@ -7,5 +7,9 @@
             <label>Show lyrics</label>
             <default>true</default>
         </entry>
+        <entry name="highlightCurrentLine" type="Bool">
+            <label>Highlight current line</label>
+            <default>true</default>
+        </entry>
     </group>
 </kcfg>

@@ -5,8 +5,12 @@ import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 
 KCM.SimpleKCM {
+
     property alias cfg_showLyrics: showLyrics.checked
     property bool cfg_showLyricsDefault: true
+
+    property alias cfg_highlightCurrentLine: highlightCurrentLine.checked
+    property bool cfg_highlightCurrentLineDefault: true
 
     ColumnLayout {
         spacing: Kirigami.Units.smallSpacing
@@ -21,6 +25,13 @@ KCM.SimpleKCM {
             id: showLyrics
             text: "Show lyrics"
             checked: cfg_showLyrics
+            Layout.alignment: Qt.AlignLeft
+        }
+
+        CheckBox {
+            id: highlightCurrentLine
+            text: "Highlight current line"
+            checked: cfg_highlightCurrentLine
             Layout.alignment: Qt.AlignLeft
         }
     }
