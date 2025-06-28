@@ -107,9 +107,9 @@ PlasmoidItem {
             Layout.preferredWidth: parent.height
             Layout.preferredHeight: parent.height
             Layout.rightMargin: 5
-            Layout.fillWidth: true
+            Layout.fillWidth: false
 
-            source: spotify && spotify.ready ? spotify.artworkUrl : "../assets/icon.svg"
+            source: spotify && spotify.ready && spotify.artworkUrl !== "" ? spotify.artworkUrl : "../assets/icon.svg"
             fillMode: Image.PreserveAspectFit
 
             /* Border radius */
@@ -164,7 +164,7 @@ PlasmoidItem {
                     Layout.fillWidth: true
                     Layout.rightMargin: 20
 
-                    color: "white"
+                    color: Kirigami.Theme.textColor
                     font: Qt.font(Object.assign({}, Kirigami.Theme.defaultFont, {weight: Font.Bold}))
                     text: spotify && spotify.ready ? spotify.track : "Spotify"
                 }
@@ -176,7 +176,7 @@ PlasmoidItem {
                     Layout.fillWidth: true
                     Layout.rightMargin: 20
 
-                    color: "white"
+                    color: Kirigami.Theme.textColor
                     font: Kirigami.Theme.defaultFont
                     text: spotify && spotify.ready ? spotify.artist : "No song playing"
                 }

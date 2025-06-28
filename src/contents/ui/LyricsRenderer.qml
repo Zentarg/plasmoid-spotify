@@ -14,7 +14,7 @@ Text {
     textFormat: Text.RichText
 
     text: "Lyrics"
-    color: "white"
+    color: Kirigami.Theme.textColor
     font: Kirigami.Theme.defaultFont
     lineHeight: 0.8
 
@@ -25,8 +25,8 @@ Text {
     property var spotify: null
     property var transitionDuration: 1000
     property var lineCount: 0
-    property var currentLineIndex: 0
-    property var hasHighlighted: false
+    property var renderedLineIndex: -1
+    property var renderedHighlighted: false
 
     onLyricsChanged: {
         if (!plasmoid.configuration.highlightCurrentLine) {
@@ -36,7 +36,7 @@ Text {
     }
 
     Timer {
-        interval: transitionDuration
+        interval: 250
         running: spotify.ready && spotify.playing && lyrics !== null
         repeat: true
         onTriggered: {
@@ -53,12 +53,12 @@ Text {
     function updateText() {
         let builder = "";
         let lines = 0;
-
         let currentLineIndex = getCurrentLineIndex();
+        let highlight = plasmoid.configuration.highlightCurrentLine;
 
         if (lyrics !== null && lyrics) {
             lyrics.forEach((line, i) => {
-                if (i === currentLineIndex || !plasmoid.configuration.highlightCurrentLine) {
+                if (i === currentLineIndex || !highlight) {
                     builder += line.text;
                 } else {
                     builder += `<span style="color:gray">${line.text}</span>`;
@@ -73,14 +73,14 @@ Text {
 
         lineCount = lines;
         textElement.text = builder;
+        renderedLineIndex = currentLineIndex;
+        renderedHighlighted = highlight;
     }
 
     function updateTargetPosition(animated = true) {
         let currentY = y;
 
-        let newValue = plasmoid.configuration.highlightCurrentLine;
-        if (hasHighlighted !== newValue || newValue) {
-            hasHighlighted = newValue;
+        if (canUpdateText()) {
             updateText();
         }
 
@@ -96,7 +96,25 @@ Text {
         }
     }
 
+    function canUpdateText() {
+        let highlight = plasmoid.configuration.highlightCurrentLine;
+        if (renderedHighlighted !== highlight) {
+            return true;
+        }
+
+        let currentLineIndex = getCurrentLineIndex();
+        if (renderedLineIndex === currentLineIndex) {
+            return false;
+        }
+
+        return highlight;
+    }
+
     function getCurrentLineIndex(offset = 0) {
+        if (lyrics === null || lyrics.length === 0) {
+            return -1;
+        }
+
         let position = spotify.getDaemonPosition() / 1_000_000 + offset;
         let target = -1;
         for (let i = 0; i < lyrics.length; i++) {
@@ -110,9 +128,9 @@ Text {
     }
 
     function calculateTargetY() {
+        let currentLineIndex = getCurrentLineIndex(transitionDuration / 1000 / 2);
         let offsetY = 0;
         let lineHeight = (textElement.contentHeight - 3) / textElement.lineCount;
-        let currentLineIndex = getCurrentLineIndex(transitionDuration / 1000);
         if (lyrics !== null && currentLineIndex >= 0) {
             offsetY = lineHeight * (currentLineIndex + 1);
         }
