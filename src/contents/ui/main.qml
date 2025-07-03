@@ -36,6 +36,12 @@ PlasmoidItem {
 
         onArtworkUrlChanged: {
             if (spotify.ready) {
+                let url = spotify.artworkUrl;
+                if (url && url.startsWith("https://") && !plasmoid.configuration.fetchAlbumCoverHttps) {
+                    url = url.replace("https://", "http://");
+                }
+                artwork.source = url || artwork.fallbackSource;
+
                 lyricsRenderer.lyrics = null;
                 lyricsLrcLib.fetchLyrics(spotify.track, spotify.artist, spotify.album).then(lyrics => {
                     lyricsRenderer.lyrics = lyrics;
@@ -108,9 +114,40 @@ PlasmoidItem {
             Layout.preferredHeight: parent.height
             Layout.rightMargin: 5
             Layout.fillWidth: false
-
-            source: spotify && spotify.ready && spotify.artworkUrl !== "" ? spotify.artworkUrl : "../assets/icon.svg"
             fillMode: Image.PreserveAspectFit
+
+            property string fallbackSource: "../assets/icon.svg"
+            property string lastAttemptedSource: ""
+
+            source: artwork.fallbackSource
+            visible: plasmoid.configuration.showAlbumCover
+
+            Timer {
+                id: fallbackTimer
+                interval: 1000
+                repeat: false
+                onTriggered: {
+                    console.warn("Failed to load artwork from", artwork.lastAttemptedSource)
+                    artwork.source = artwork.fallbackSource
+                }
+            }
+
+            onSourceChanged: {
+                if (source === fallbackSource) {
+                    fallbackTimer.stop()
+                } else {
+                    fallbackTimer.restart()
+                    lastAttemptedSource = source
+                }
+            }
+
+            onStatusChanged: {
+                switch (status) {
+                    case Image.Ready:
+                        fallbackTimer.stop()
+                        break
+                }
+            }
 
             /* Border radius */
             layer.enabled: true

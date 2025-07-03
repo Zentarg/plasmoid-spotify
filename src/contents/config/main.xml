@@ -11,5 +11,14 @@
             <label>Highlight current line</label>
             <default>true</default>
         </entry>
+        <entry name="showAlbumCover" type="Bool">
+            <label>Show album cover</label>
+            <default>true</default>
+        </entry>
+        <entry name="fetchAlbumCoverHttps" type="Bool">
+            <label>Fetch album cover from HTTPS sources</label>
+            <default>false</default>
+            <description>Enable this to fetch album covers from HTTPS sources, which is more secure.</description>
+        </entry>
     </group>
 </kcfg>
