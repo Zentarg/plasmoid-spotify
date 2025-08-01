@@ -1,3 +1,15 @@
+# Fork of KDE Plasma Spotify Plasmoid
+
+This fork only adds functionality for desktop plasmoid. I have not, nor do I intend to, tested functionality with lyrics and on an app-bar.
+
+## Extra features
+- Respects the user defined width of the plasmoid
+- Scrolls the title and artist name on hover if it overflows
+- Adds shift+scroll as previous/next song
+- Adds click to launch spotify if its not already launched
+- Lets the progress bar take up entire width of widget instead of only the artwork
+
+
 # KDE Plasma Spotify Plasmoid
 
 A KDE Plasma widget that displays the current song playing on Spotify along with its lyrics, synchronized in real-time.<br>
