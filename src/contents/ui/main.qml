@@ -63,10 +63,11 @@ PlasmoidItem {
 
     /* Mouse click handling */
     MouseArea {
+        id: mouseArea
         z: 100
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-        cursorShape: spotify && spotify.canRaise ? Qt.PointingHandCursor : Qt.ArrowCursor
+        cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
 
         onClicked: (mouse) => {
@@ -77,17 +78,32 @@ PlasmoidItem {
                 case Qt.LeftButton:
                     if (spotify.canRaise) {
                         spotify.raise()
+                    } else if (!spotify.ready) {
+                        Qt.openUrlExternally("spotify:") // Open Spotify app if not ready
                     }
                     break
             }
         }
 
         onWheel: (wheel) => {
-            if (wheel.angleDelta.y > 0) {
-                spotify.changeVolume(volumeStep / 100, true)
+            if (wheel.modifiers & Qt.ShiftModifier) {
+                if (wheel.angleDelta.y > 0) {
+                    spotify.nextSong()
+                } else {
+                    spotify.previousSong()
+                }
             } else {
-                spotify.changeVolume(-volumeStep / 100, true)
+                if (wheel.angleDelta.y > 0) {
+                    spotify.changeVolume(volumeStep / 100, true)
+                } else {
+                    spotify.changeVolume(-volumeStep / 100, true)
+                }
             }
+        }
+
+        onExited : () => {
+            title.x = 0
+            artist.x = 0
         }
     }
 
@@ -161,33 +177,18 @@ PlasmoidItem {
                     }
                 }
             }
-
-            /* Progress bar */
-            Rectangle {
-                id: progress
-                visible: spotify && spotify.ready
-
-                x: 2
-                height: 3
-                width: artwork.width - 4
-                anchors.bottom: parent.bottom
-                color: "#282828"
-
-                Rectangle {
-                    id: progressIndicator
-                    anchors.bottom: parent.bottom
-                    height: 2
-                    width: 0
-                    color: "#1db954"
-                }
-            }
         }
 
         /* Song information */
         Item {
-            Layout.preferredWidth: column.implicitWidth
+            // Layout.preferredWidth: column.implicitWidth
+            id: songInfoContainer
             Layout.preferredHeight: column.implicitHeight
             Layout.fillWidth: true
+            Layout.rightMargin: 2
+            clip: true
+            property bool titleNeedsScroll: title.implicitWidth > width
+            property bool artistNeedsScroll: artist.implicitWidth > width
 
             ColumnLayout {
                 id: column
@@ -198,28 +199,78 @@ PlasmoidItem {
                 Text {
                     id: title
                     wrapMode: Text.NoWrap
+                    elide: Text.ElideNone
                     Layout.fillWidth: true
                     Layout.rightMargin: 20
 
                     color: Kirigami.Theme.textColor
                     font: Qt.font(Object.assign({}, Kirigami.Theme.defaultFont, {weight: Font.Bold}))
                     text: spotify && spotify.ready ? spotify.track : "Spotify"
+
+                    SequentialAnimation on x {
+                        running: songInfoContainer.titleNeedsScroll && mouseArea.containsMouse
+                        loops: Animation.Infinite
+                        PauseAnimation { duration: 100 }
+                        NumberAnimation { to: -title.implicitWidth + songInfoContainer.width; duration: Math.max(2000, title.implicitWidth * 10) }
+                        PauseAnimation { duration: 1000 }
+                        NumberAnimation { to: 0; duration: 150 }
+                        PauseAnimation { duration: 1000 }
+                    }
+
+
                 }
 
                 /* Artist name */
                 Text {
                     id: artist
                     wrapMode: Text.NoWrap
+                    elide: Text.ElideNone
                     Layout.fillWidth: true
                     Layout.rightMargin: 20
 
                     color: Kirigami.Theme.textColor
                     font: Kirigami.Theme.defaultFont
                     text: spotify && spotify.ready ? spotify.artist : "No song playing"
+
+
+                    SequentialAnimation on x {
+                        running: songInfoContainer.artistNeedsScroll && mouseArea.containsMouse
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0; duration: 150 }
+                        PauseAnimation { duration: 100 }
+                        NumberAnimation { to: -artist.implicitWidth + songInfoContainer.width; duration: Math.max(2000, artist.implicitWidth * 10) }
+                        PauseAnimation { duration: 1000 }
+                    }
                 }
             }
         }
     }
+
+
+    /* Progress bar */
+    Rectangle {
+        id: progress
+        visible: spotify && spotify.ready
+
+        x: 2
+        height: 3
+        width: parent.implicitWidth//width: artwork.width - 4
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 2
+        anchors.rightMargin: 2
+        color: "#282828"
+
+        Rectangle {
+            id: progressIndicator
+            anchors.bottom: parent.bottom
+            height: 2
+            width: 0
+            color: "#1db954"
+        }
+    }
+
 
     function updateProgressIndicator() {
         if (spotify.ready) {

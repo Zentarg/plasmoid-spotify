@@ -66,4 +66,17 @@ QtObject {
         }
     }
 
+    function previousSong() {
+        if (ready) {
+            player.Previous();
+        }
+    }
+
+    function nextSong() {
+        if (ready) {
+            player.Next();
+        }
+    }
+
+
 }
